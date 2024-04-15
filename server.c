@@ -10,10 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
+#include "signal.h"
 #include <unistd.h>
 #include <stdio.h>
 #include "stdlib.h"
+#include <string.h>
 char *global = NULL;
 
 int ft_strlen(char *s)
@@ -49,24 +50,25 @@ char *ft_strjoin(char const *s1, char s2)
 
 
 
-void manage_letter(char *bytes) {
-    int i = 0;
+void manage_letter(char *bytes) 
+{
     char temp = 0;
-    while(i < 8) {
+    int i = 0;
+    while(i < 8 )
+    {
         temp <<= 1;
-        if(bytes[i] == '1') temp |= 1;
-        i++;
+        if (bytes[i] == '1') temp |= 1;
+         i++;
     }
-    
+
+    char *new_global = ft_strjoin(global, temp);
+    free(global); 
+    global = new_global;
     if (temp == '\0') 
-    { 
-            char *new_global = ft_strjoin(global, temp);       
-            write(1, global, ft_strlen(global));
-            write(1, "\n", 1);
-            global = new_global;
-            free(global);
-            global = NULL;
-        }
+    {
+        write(1, global, strlen(global));
+        write(1, "\n", 1);
+    }
 }
 
 
@@ -78,15 +80,23 @@ void  handler(int reader, siginfo_t *signal, void *useless)
   (void)signal;
   if(reader == SIGINT)
   {  
+      printf("EXIT '\n'");
        exit(1);
        free(global);
   }
   if(reader == SIGUSR1)
+  {
     bytes[bytes_counter++] = '0';
-  else if(reader == SIGUSR2)
+    write(1, "bytes == 0 '\n", 14);
+  }
+  if(reader == SIGUSR2)
+  {
     bytes[bytes_counter++] = '1';
+    write(1, "bytes == 1 '\n", 14);
+}
   if(bytes_counter == 8)
     {
+      printf("bytes == 8 '\n");
       manage_letter(bytes);
       bytes_counter = 0;
     }

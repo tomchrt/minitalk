@@ -52,14 +52,16 @@ void char_to_binary(char s, int pid)
     
     while(i >= 0)
     {   
-    bit = (s >> i) & 1;
-    if(bit == 1)
+    bit = (s >> i & 1);
+    if(bit == 0)
     {
-        kill(pid, SIGUSR2);
+        kill(pid, SIGUSR1);
+        write(1, "killed bytes == 0 '\n", 21);
     }
     else
     {
-        kill(pid, SIGUSR1);
+        kill(pid, SIGUSR2);
+        write(1, "killed bytes == 1 '\n", 21);
     }
     usleep(100);
     i--;
